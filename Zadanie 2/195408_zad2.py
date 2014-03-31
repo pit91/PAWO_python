@@ -12,14 +12,15 @@ Dodatkowe funkcje:
     2) q - wyjscie z programu
 
 Program zawiera obsluge wyjatkow przy wprowadzaniu rownania,
-by zapobiec wprowadzeniu liczby/litery zamiast liczby.
+by zapobiec wprowadzeniu liczby/litery zamiast liczby oraz probie
+dzielenia przez zero.
 
 Posiada asercje przy bledach wprowadzania, blednych znakach
-rownania, zlej iloci wprowadzonych danych, oraz braku
+rownania, zlej ilosci wprowadzonych danych, oraz braku
 nazwy pliku do zapisu.
 
 Autor: Piotr Gasior
-Data: 30.03.2014r.
+Data: 31.03.2014r.
 '''
 
 #dodanie bibliotek
@@ -100,7 +101,12 @@ def do_eq(log):
     elif log[len(log)-1][0] == '*': #jezeli wywlano mnozenie
         result = var_a * var_b
     elif log[len(log)-1][0] == '/': #jezeli wywolano dzielenie
-        result = var_a / var_b
+        try:
+            result = var_a / var_b
+        except ZeroDivisionError:
+            print "Blad przy wykonywaniu rownania! - Dzielenie przez 0!"
+           # log.pop()
+            result = None
     elif log[len(log)-1][0] == 'save':
         save_eq(log)
         result = None
@@ -161,7 +167,14 @@ if __name__ == '__main__':
             TEMP = scan_eq() #odczytaj dane
 
         REG.append(TEMP) #wczytanie rownanie do rejestru
-        REG[len(REG)-1].append(do_eq(REG)) #wczytanie wyniku
-        print "Wynik rownania: "
-        print REG[len(REG)-1][3] #wyswietlenie wyniku
+        if REG[len(REG)-1][0] != 'save':
+            REG[len(REG)-1].append(do_eq(REG)) #wczytanie wyniku
+            if REG[len(REG)-1][3] == None:
+                REG.pop()
+            else:
+                print "Wynik rownania: "
+                print REG[len(REG)-1][3] #wyswietlenie wyniku
+        else:
+            REG[len(REG)-1].append(do_eq(REG)) #wczytanie wyniku
+            print "Archiwum przeprowadzonych rowanan zostalo zapisane!"
         TEMP = None #wyzeruj zmienna
